@@ -1,0 +1,13 @@
+diff --git a/node_modules/@codechecks/client/dist/ci-providers/Local.js b/node_modules/@codechecks/client/dist/ci-providers/Local.js
+index 8e9a026..81a71bb 100644
+--- a/node_modules/@codechecks/client/dist/ci-providers/Local.js
++++ b/node_modules/@codechecks/client/dist/ci-providers/Local.js
+@@ -52,7 +52,7 @@ class LocalProvider {
+             },
+             base: {
+                 // @todo we should have heuristics to detect "main" branch, sometimes it's dev
+-                sha: await this.getShaForRef("master"),
++                sha: await this.getShaForRef((await execa.shell(`git symbolic-ref --short HEAD`)).stdout.trim()),
+             },
+         };
+     }

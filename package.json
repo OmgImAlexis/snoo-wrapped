@@ -14,7 +14,8 @@
     "test:coverage": "nyc npm test",
     "type:coverage": "typescript-coverage-report",
     "coverage": "npm run type:coverage && npm run test:coverage",
-    "bundle-size": "bundlesize"
+    "bundle-size": "bundlesize",
+    "codechecks": "codechecks"
   },
   "files": [
     "dist"
@@ -46,6 +47,7 @@
     "ws": "^3.3.1"
   },
   "devDependencies": {
+    "@codechecks/client": "^0.1.11",
     "@types/merge-deep": "^3.0.0",
     "@types/node": "^16.4.2",
     "@types/node-fetch": "^2.5.12",
@@ -65,6 +67,7 @@
     "patch-package": "^6.4.7",
     "ts-node": "^10.1.0",
     "tsup": "^4.12.5",
+    "typecov": "^0.2.3",
     "typescript": "^4.3.5",
     "typescript-coverage-report": "^0.6.0"
   },

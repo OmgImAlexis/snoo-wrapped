@@ -25,6 +25,6 @@ jobs:
       - run: npm run build
       - run: npm run coverage
       - run: npm run bundle-size -- --enable-github-checks
-      - run: npx codechecks
+      - run: npm run codechecks
         env:
           CC_SECRET: ${{ secrets.CC_SECRET }}
