@@ -1,0 +1,16 @@
+node_modules/
+.DS_Store
+npm-debug.log
+dist/
+doc/
+coverage/
+coverage-ts/
+test/_browser.spec.js
+oauth_info.json
+.eslintcache
+.env
+old_src
+old_test
+.vscode
+.nyc_output
+*.tgz

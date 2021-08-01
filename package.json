@@ -1,0 +1,95 @@
+{
+  "name": "snoo-wrapped",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "A wrapper for the Reddit OAuth API.",
+  "main": "dist/snoo-wrapped.js",
+  "types": "dist/snoo-wrapped.d.ts",
+  "scripts": {
+    "lint": "eslint",
+    "prepare": "npm run build",
+    "build": "tsup ./src/snoo-wrapped.ts --dts-resolve",
+    "test": "ava ./test/**/*.spec.ts -v",
+    "test:coverage": "nyc npm test",
+    "type:coverage": "typescript-coverage-report",
+    "coverage": "npm run type:coverage && npm run test:coverage",
+    "bundlesize": "bundlesize"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OmgImAlexis/snoowrapped.git"
+  },
+  "keywords": [
+    "reddit",
+    "api",
+    "wrapper",
+    "praw",
+    "snoo",
+    "snoowrapped",
+    "snoowrap"
+  ],
+  "author": "OmgImAlexis <xo@wvvw.me>",
+  "bugs": {
+    "url": "https://github.com/OmgImAlexis/snoowrapped/issues"
+  },
+  "homepage": "https://github.com/OmgImAlexis/snoowrapped",
+  "dependencies": {
+    "dedent": "^0.7.0",
+    "merge-deep": "^3.0.3",
+    "p-map": "^5.1.0",
+    "p-map-series": "^3.0.0",
+    "p-tap": "^4.0.0",
+    "ws": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/merge-deep": "^3.0.0",
+    "@types/node": "^16.4.2",
+    "@types/node-fetch": "^2.5.12",
+    "@types/ws": "^7.4.7",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
+    "ava": "^3.15.0",
+    "bundlesize": "^0.18.1",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.31.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-promise": "^5.1.0",
+    "node-fetch": "^2.6.1",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.1.0",
+    "tsup": "^4.12.5",
+    "typescript": "^4.3.5",
+    "typescript-coverage-report": "^0.6.0"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "bundlesize": [
+    {
+      "path": "./dist/snoo-wrapped.js",
+      "maxSize": "20 kB",
+      "compression": "brotli"
+    },
+    {
+      "path": "./dist/snoo-wrapped.js",
+      "maxSize": "20 kB",
+      "compression": "gzip"
+    },
+    {
+      "path": "./dist/snoo-wrapped.js",
+      "maxSize": "90 kB",
+      "compression": "none"
+    }
+  ],
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register/transpile-only"
+    ]
+  }
+}
