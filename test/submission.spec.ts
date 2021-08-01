@@ -3,18 +3,29 @@ import { RequiredArgumentError } from '../src/errors/required-argument-erorr';
 import { Submission } from '../src/objects/submission';
 import { SnooWrapped } from '../src/snoo-wrapped';
 import { credentials } from './_helpers/credentials';
+import { mockServer } from './_helpers/mock-fetch';
 
 const test = ava as TestInterface<{
     snooWrapped: SnooWrapped;
 }>;
 
 test.before(t => {
+    // Enable API mocking
+    mockServer.listen();
+
+    // Add context
     t.context = {
         snooWrapped: new SnooWrapped(credentials)
     };
-})
+});
 
-test.serial('constructor', t => {
+// Reset any runtime request handlers we may add during the tests.
+test.afterEach(() => mockServer.resetHandlers());
+
+// Disable API mocking after the tests are done.
+test.after(() => mockServer.close());
+
+test('constructor', t => {
     const { snooWrapped } = t.context;
 
     // OK

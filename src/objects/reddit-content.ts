@@ -102,7 +102,7 @@ export class RedditContent<Data extends { name: string; }> {
         const accessToken = await this._updateAccessToken();
 
         // Resolve URL
-        const url = new URL(uri, 'https://oauth.reddit.com/');
+        const url = new URL(uri, process.env.MOCK_URL ?? 'https://oauth.reddit.com/');
         Object.entries(query ?? {}).forEach(([key, value]) => {
             url.searchParams.append(key, value);
         });
