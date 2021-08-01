@@ -1,0 +1,12 @@
+diff --git a/node_modules/node-fetch/package.json b/node_modules/node-fetch/package.json
+index 9537927..f8f5e08 100644
+--- a/node_modules/node-fetch/package.json
++++ b/node_modules/node-fetch/package.json
+@@ -5,6 +5,7 @@
+   "_integrity": "sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==",
+   "_location": "/node-fetch",
+   "_phantomChildren": {},
++  "types": "../@types/node-fetch/index.d.ts",
+   "_requested": {
+     "type": "remote",
+     "raw": "node-fetch@https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.1.tgz",

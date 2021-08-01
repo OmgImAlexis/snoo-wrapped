@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint",
     "prepare": "npm run build",
+    "postinstall": "patch-package",
     "build": "tsup ./src/snoo-wrapped.ts --dts-resolve",
     "test": "ava ./test/**/*.spec.ts -v",
     "test:coverage": "nyc npm test",
