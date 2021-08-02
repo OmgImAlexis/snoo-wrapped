@@ -164,3 +164,39 @@ test.serial('unlock()', async t => {
     const fetchedSubmission = await updatedSubmission.fetch();
     t.false(fetchedSubmission.locked);
 });
+
+test.serial('hide()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.hidden, undefined);
+
+    // Hide
+    const updatedSubmission = await submission.hide();
+
+    // Now Submission is hidden
+    t.true(updatedSubmission.hidden);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.true(fetchedSubmission.hidden);
+});
+
+test.serial('unhide()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.hidden, undefined);
+
+    // Unhide
+    const updatedSubmission = await submission.unhide();
+
+    // Now Submission is hidden
+    t.false(updatedSubmission.hidden);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.false(fetchedSubmission.hidden);
+});

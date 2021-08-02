@@ -38,6 +38,16 @@ export const mockServer = setupServer(
         info[id].data.children[0].data.locked = false;
         return res(ctx.json({}));
     }),
+    rest.post('https://oauth.reddit.com/api/hide', (req, res, ctx) => {
+        const id = req.url.searchParams.get('id');
+        info[id].data.children[0].data.hidden = true;
+        return res(ctx.json({}));
+    }),
+    rest.post('https://oauth.reddit.com/api/unhide', (req, res, ctx) => {
+        const id = req.url.searchParams.get('id');
+        info[id].data.children[0].data.hidden = false;
+        return res(ctx.json({}));
+    }),
     rest.get('https://oauth.reddit.com/r/AskReddit/comments/article', (req, res, ctx) => {
         const article = req.url.searchParams.get('article');
         return res(ctx.json(askRedditArticle[`t3_${article}`]));
