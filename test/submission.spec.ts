@@ -236,3 +236,63 @@ test.serial('unspoiler()', async t => {
     const fetchedSubmission = await updatedSubmission.fetch();
     t.false(fetchedSubmission.spoilered);
 });
+
+test.serial('sticky()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.stickied, undefined);
+
+    // Requires slot
+    t.throwsAsync(async () => {
+        // @ts-expect-error
+        await submission.sticky();
+    }, { instanceOf: RequiredArgumentError });
+
+    // Requires positive number
+    t.throwsAsync(async () => {
+        // @ts-expect-error
+        await submission.sticky(-1);
+    }, { instanceOf: RequiredArgumentError });
+
+    // Requires 1 or 2
+    t.throwsAsync(async () => {
+        // @ts-expect-error
+        await submission.sticky(3);
+    }, { instanceOf: RequiredArgumentError });
+
+    // Requires a number
+    t.throwsAsync(async () => {
+        // @ts-expect-error
+        await submission.sticky('');
+    }, { instanceOf: RequiredArgumentError });
+
+    // Sticky
+    const updatedSubmission = await submission.sticky(1);
+
+    // Now Submission is stickied
+    t.true(updatedSubmission.stickied);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.true(fetchedSubmission.stickied);
+});
+
+test.serial('unsticky()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.stickied, undefined);
+
+    // Unsticky
+    const updatedSubmission = await submission.unsticky();
+
+    // Now Submission is unstickied
+    t.false(updatedSubmission.stickied);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.false(fetchedSubmission.stickied);
+});

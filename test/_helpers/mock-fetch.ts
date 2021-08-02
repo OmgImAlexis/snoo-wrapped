@@ -58,6 +58,12 @@ export const mockServer = setupServer(
         info[id].data.children[0].data.spoiler = false;
         return res(ctx.json({}));
     }),
+    rest.post('https://oauth.reddit.com/api/set_subreddit_sticky', (req, res, ctx) => {
+        const id = req.url.searchParams.get('id');
+        const slot = req.url.searchParams.get('num');
+        info[id].data.children[0].data.stickied = slot === '1' || slot === '2';
+        return res(ctx.json({}));
+    }),
     rest.get('https://oauth.reddit.com/r/AskReddit/comments/article', (req, res, ctx) => {
         const article = req.url.searchParams.get('article');
         return res(ctx.json(askRedditArticle[`t3_${article}`]));

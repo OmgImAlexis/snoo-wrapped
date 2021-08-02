@@ -1,3 +1,4 @@
+import { RequiredArgumentError } from "../errors/required-argument-erorr";
 import { SnooWrapped } from "../snoo-wrapped";
 import { SubredditType } from "../types";
 import { Comment, RawComment } from "./comment";
@@ -290,8 +291,10 @@ export class Submission<Data extends {
      * @param slot The sticky slot to put this submission in; This should be either 1 or 2.
      * @example await sW.getSubmission('2np694').sticky(2);
      */
-    async sticky (slot = 1 | 2) {
-        return this._fetch('api/set_subreddit_sticky', { query: { id: this.name, num: slot } })
+    async sticky (slot: 1 | 2) {
+        if (!slot || ![1, 2].includes(slot)) throw new RequiredArgumentError('slot');
+
+        return this._fetch('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, num: slot } })
             .then(data => {
                 return new Submission({
                     ...this.data,
@@ -305,7 +308,7 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unsticky();
      */
     async unsticky () {
-        return this._fetch('api/set_subreddit_sticky', { query: { id: this.name, state: false } })
+        return this._fetch('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, state: false } })
             .then(data => {
                 return new Submission({
                     ...this.data,
