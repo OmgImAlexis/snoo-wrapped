@@ -4,32 +4,32 @@ import { RedditContent } from "./reddit-content";import { RedditUser } from "./r
 import { Submission } from "./submission";
 import { Subreddit } from "./subreddit";
 
-type MissingEndpoint = { message: 'Not Found'; error: number; };
+export interface RawComment {
+    name: string;
+    author: string;
+    subreddit: string;
+    ups: number;
+    downs: number;
+    created: number;
+    edited: number;
+    gilded: number;
+    subreddit_type: SubredditType;
+    archived: boolean;
+    body: string;
+    parent_id: string;
+}
 
-export type RawComment = {
+interface RawResult {
     kind: 'Listing',
     data: {
         children: [{
             kind: 't1',
-            data: {
-                name: string;
-                author: string;
-                subreddit: string;
-                ups: number;
-                downs: number;
-                created: number;
-                edited: number;
-                gilded: number;
-                subreddit_type: SubredditType;
-                archived: boolean;
-                body: string;
-                parent_id: string;
-            }
+            data: RawComment;
         }]
     }
-};
+}
 
-export class Comment<Data extends {
+interface CommentData {
     name: string;
     submission?: Submission;
     subreddit?: Subreddit;
@@ -44,22 +44,9 @@ export class Comment<Data extends {
         up?: number;
         down?: number;
     };
-} = {
-    name: string;
-    submission?: Submission;
-    subreddit?: Subreddit;
-    body?: string;
-    created?: Date;
-    edited?: Date;
-    gilded?: number;
-    archived?: boolean;
-    subredditType?: SubredditType;
-    author?: RedditUser;
-    votes?: {
-        up?: number;
-        down?: number;
-    };
-}> extends RedditContent<Data> {
+}
+
+export class Comment<Data extends CommentData = CommentData> extends RedditContent<Data> {
     public submission?: Submission;
     public body?: string;
     public created?: Date;
@@ -89,11 +76,8 @@ export class Comment<Data extends {
         this.archived = data.archived;
     }
 
-    protected _populate(data: MissingEndpoint | RawComment) {
-        if ('error' in data && data.error === 404) return;
-        if ('kind' in data && data.kind !== 'Listing') return;
-
-        const commentData = (data as RawComment).data.children[0].data;
+    protected _populate(data: RawResult) {
+        const commentData = data.data.children[0].data;
 
         return new Comment({
             ...this.data,
@@ -111,13 +95,6 @@ export class Comment<Data extends {
             body: commentData.body,
             archived: commentData.archived
         }, this.snooWrapped);
-
-        // const submissionData = (data as RawResult)[0].data.children[0].data;
-
-        // return new Comment({
-        //     ...this.data,
-        //     submission: new Submission({ name: submissionData.name }, this.snooWrapped)
-        // }, this.snooWrapped);
     }
 
     protected get uri() {

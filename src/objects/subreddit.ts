@@ -1,13 +1,12 @@
 import { SnooWrapped } from "../snoo-wrapped";
 import { RedditContent } from "./reddit-content";
 
-export class Subreddit<Data extends {
+interface SubredditData {
     name: string;
     subscribers?: number;
-} = {
-    name: string;
-    subscribers?: number;
-}> extends RedditContent<Data> {
+}
+
+export class Subreddit<Data extends SubredditData = SubredditData> extends RedditContent<Data> {
     public subscribers?: number;
 
     constructor(data: Data, snooWrapped: SnooWrapped) {

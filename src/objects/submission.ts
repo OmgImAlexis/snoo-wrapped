@@ -26,7 +26,7 @@ interface RawSubmission {
     permalink: string;
     stickied: boolean;
     subreddit_subscribers: number;
-};
+}
 
 interface RawResult {
     kind: 'Listing',
@@ -36,9 +36,9 @@ interface RawResult {
             data: RawSubmission;
         }]
     }
-};
+}
 
-export class Submission<Data extends {
+interface SubmissionData {
     name: string;
     subreddit?: Subreddit;
     comments?: Comment[];
@@ -62,31 +62,9 @@ export class Submission<Data extends {
     stickied?: boolean;
     subscribers?: number;
     locked?: boolean;
-} = {
-    name: string;
-    subreddit?: Subreddit;
-    comments?: Comment[];
-    title?: string;
-    author?: RedditUser;
-    votes?: {
-        up?: number;
-        down?: number;
-    };
-    created?: Date;
-    edited?: Date;
-    gilded?: number;
-    subredditType?: SubredditType;
-    domain?: string;
-    body?: string;
-    archived?: boolean;
-    nsfw?: boolean;
-    spoilered?: boolean;
-    hidden?: boolean;
-    permalink?: string;
-    stickied?: boolean;
-    subscribers?: number;
-    locked?: boolean;
-}> extends RedditContent<Data> {
+}
+
+export class Submission<Data extends SubmissionData = SubmissionData> extends RedditContent<Data> {
     public subreddit?: Subreddit;
     public comments?: Comment[];
     public title?: string;
@@ -139,7 +117,15 @@ export class Submission<Data extends {
 
     protected async _populate(data: RawResult) {
         const submissionData = (data as RawResult).data.children[0].data;
-        const comments = await this._fetch<[RawSubmission, RawComment]>(`r/${submissionData.subreddit}/comments/article`, {
+        const comments = await this._fetch<[RawSubmission, {
+            kind: 'Listing',
+            data: {
+                children: [{
+                    kind: 't1',
+                    data: RawComment;
+                }]
+            }
+        }]>(`r/${submissionData.subreddit}/comments/article`, {
                 query: {
                     limit: 1000,
                     showmore: true,

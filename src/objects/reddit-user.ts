@@ -24,7 +24,7 @@ interface RawResult {
     data: RawRedditUser
 };
 
-export class RedditUser<Data extends {
+interface RedditUserData {
     name: string;
     id?: string;
     isVerified?: boolean;
@@ -34,17 +34,9 @@ export class RedditUser<Data extends {
     karma?: { awardee?: number; awarder?: number; link?: number; comment?: number; total?: number; };
     acceptsFollowers?: boolean;
     created?: Date;
-} = {
-    name: string;
-    id?: string;
-    isVerified?: boolean;
-    isGold?: boolean;
-    isMod?: boolean;
-    hasVerifiedEmail?: boolean;
-    karma?: { awardee?: number; awarder?: number; link?: number; comment?: number; total?: number; };
-    acceptsFollowers?: boolean;
-    created?: Date;
-}> extends RedditContent<Data> {
+}
+
+export class RedditUser<Data extends RedditUserData = RedditUserData> extends RedditContent<Data> {
     public id?: string;
     public isVerified?: boolean;
     public isGold?: boolean;
