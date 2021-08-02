@@ -55,7 +55,7 @@ export class Submission<Data extends {
     body?: string;
     archived?: boolean;
     nsfw?: boolean;
-    spoiler?: boolean;
+    spoilered?: boolean;
     hidden?: boolean;
     permalink?: string;
     stickied?: boolean;
@@ -79,7 +79,7 @@ export class Submission<Data extends {
     body?: string;
     archived?: boolean;
     nsfw?: boolean;
-    spoiler?: boolean;
+    spoilered?: boolean;
     hidden?: boolean;
     permalink?: string;
     stickied?: boolean;
@@ -99,7 +99,7 @@ export class Submission<Data extends {
     public body?: string;
     public archived?: boolean;
     public nsfw?: boolean;
-    public spoiler?: boolean;
+    public spoilered?: boolean;
     public hidden?: boolean;
     public permalink?: string;
     public stickied?: boolean;
@@ -124,7 +124,7 @@ export class Submission<Data extends {
         this.body = data.body;
         this.archived = data.archived;
         this.nsfw = data.nsfw;
-        this.spoiler = data.spoiler;
+        this.spoilered = data.spoilered;
         this.hidden = data.hidden;
         this.permalink = data.permalink;
         this.stickied = data.stickied;
@@ -165,7 +165,7 @@ export class Submission<Data extends {
             archived: submissionData.archived,
             nsfw: submissionData.over_18,
             comments: comments.map(comment => new Comment({ name: comment.name }, this.snooWrapped)),
-            spoiler: submissionData.spoiler,
+            spoilered: submissionData.spoiler,
             hidden: submissionData.hidden,
             permalink: submissionData.permalink,
             stickied: submissionData.stickied,
@@ -261,12 +261,12 @@ export class Submission<Data extends {
      * **Note:** This will silently fail if the subreddit has disabled spoilers.
      * @example await sW.getSubmission('2np694').markSpoiler();
      */
-    async markSpoiler () {
+    async spoiler () {
         return this._fetch('api/spoiler', { method: 'POST', query: { id: this.name } })
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    spoiler: Object.keys(data).length === 0 ? true : false
+                    spoilered: Object.keys(data).length === 0 ? true : false
                 }, this.snooWrapped);
             });
     }
@@ -275,12 +275,12 @@ export class Submission<Data extends {
      * Unmark a submission as a spoiler.
      * @example await sW.getSubmission('2np694').unmarkSpoiler();
      */
-    async unmarkSpoiler () {
+    async unspoiler () {
         return this._fetch('api/unspoiler', { method: 'POST', query: { id: this.name } })
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    spoiler: Object.keys(data).length === 0 ? false : true
+                    spoilered: Object.keys(data).length === 0 ? false : true
                 }, this.snooWrapped);
             });
     }
