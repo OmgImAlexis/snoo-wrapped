@@ -60,6 +60,7 @@ export class Submission<Data extends {
     permalink?: string;
     stickied?: boolean;
     subscribers?: number;
+    locked?: boolean;
 } = {
     name: string;
     subreddit?: Subreddit;
@@ -83,6 +84,7 @@ export class Submission<Data extends {
     permalink?: string;
     stickied?: boolean;
     subscribers?: number;
+    locked?: boolean;
 }> extends RedditContent<Data> {
     public subreddit?: Subreddit;
     public comments?: Comment[];
@@ -102,6 +104,7 @@ export class Submission<Data extends {
     public permalink?: string;
     public stickied?: boolean;
     public subscribers?: number;
+    public locked?: boolean;
     
     constructor(data: Data, snooWrapped: SnooWrapped) {
         super(data, snooWrapped);
@@ -126,6 +129,7 @@ export class Submission<Data extends {
         this.permalink = data.permalink;
         this.stickied = data.stickied;
         this.subscribers = data.subscribers;
+        this.locked = data.locked;
     }
 
     protected get uri() {
@@ -219,7 +223,7 @@ export class Submission<Data extends {
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    locked: Object.keys(data).length === 0 ? true : false
+                    locked: Object.keys(data).length === 0 ? false : true
                 }, this.snooWrapped);
             });
     }
@@ -247,7 +251,7 @@ export class Submission<Data extends {
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    hidden: Object.keys(data).length === 0 ? true : false
+                    hidden: Object.keys(data).length === 0 ? false : true
                 }, this.snooWrapped);
             });
     }
@@ -276,7 +280,7 @@ export class Submission<Data extends {
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    spoiler: Object.keys(data).length === 0 ? true : false
+                    spoiler: Object.keys(data).length === 0 ? false : true
                 }, this.snooWrapped);
             });
     }
@@ -305,7 +309,7 @@ export class Submission<Data extends {
             .then(data => {
                 return new Submission({
                     ...this.data,
-                    stickied: Object.keys(data).length === 0 ? true : false
+                    stickied: Object.keys(data).length === 0 ? false : true
                 }, this.snooWrapped);
             });
     }

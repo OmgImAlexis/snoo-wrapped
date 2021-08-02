@@ -128,3 +128,39 @@ test.serial('unmarkNsfw()', async t => {
     const fetchedSubmission = await updatedSubmission.fetch();
     t.false(fetchedSubmission.nsfw);
 });
+
+test.serial('lock()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.locked, undefined);
+
+    // Lock
+    const updatedSubmission = await submission.lock();
+
+    // Now Submission is locked
+    t.true(updatedSubmission.locked);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.true(fetchedSubmission.locked);
+});
+
+test.serial('unlock()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.locked, undefined);
+
+    // Unlock
+    const updatedSubmission = await submission.unlock();
+
+    // Now Submission is unlocked
+    t.false(updatedSubmission.locked);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.false(fetchedSubmission.locked);
+});

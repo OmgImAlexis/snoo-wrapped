@@ -11,7 +11,7 @@
     "postinstall": "patch-package --exclude //",
     "build": "tsup ./src/snoo-wrapped.ts --dts-resolve",
     "test": "ava ./test/**/*.spec.ts -v",
-    "test:coverage": "nyc npm test",
+    "test:coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
     "type:coverage": "typescript-coverage-report",
     "coverage": "npm run type:coverage && npm run test:coverage",
     "bundle-size": "bundlesize",
