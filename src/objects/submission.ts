@@ -139,14 +139,14 @@ export class Submission<Data extends {
 
     protected async _populate(data: RawResult) {
         const submissionData = (data as RawResult).data.children[0].data;
-        const comments = await this._fetch(`r/${submissionData.subreddit}/comments/article`, {
+        const comments = await this._fetch<[RawSubmission, RawComment]>(`r/${submissionData.subreddit}/comments/article`, {
                 query: {
                     limit: 1000,
                     showmore: true,
                     article: submissionData.name.substring(3)
                 }
             })
-            .then(([, comments]: [RawSubmission, RawComment]) => comments.data.children.map(child => child.data));
+            .then(([, comments]) => comments.data.children.map(child => child.data));
 
         return new Submission({
             ...this.data,
@@ -178,11 +178,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').markNsfw();
      */
     async markNsfw () {
-        return this._fetch('api/marknsfw', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/marknsfw', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    nsfw: Object.keys(data).length === 0 ? true : false,
+                    nsfw: true,
                 }, this.snooWrapped)
             });
     }
@@ -192,13 +192,14 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unmarkNsfw();
      */
      async unmarkNsfw () {
-        return this._fetch('api/unmarknsfw', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/unmarknsfw', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    nsfw: Object.keys(data).length === 0 ? false : true,
+                    nsfw: false,
                 }, this.snooWrapped);
-            });
+            })
+            .catch();
     }
 
     /**
@@ -206,11 +207,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').lock();
      */
     async lock () {
-        return this._fetch('api/lock', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/lock', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    locked: Object.keys(data).length === 0 ? true : false
+                    locked: true
                 }, this.snooWrapped);
             });
     }
@@ -220,11 +221,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unlock();
      */
     async unlock () {
-        return this._fetch('api/unlock', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/unlock', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    locked: Object.keys(data).length === 0 ? false : true
+                    locked: false,
                 }, this.snooWrapped);
             });
     }
@@ -234,11 +235,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').hide();
      */
     async hide () {
-        return this._fetch('api/hide', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/hide', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    hidden: Object.keys(data).length === 0 ? true : false
+                    hidden: true
                 }, this.snooWrapped);
             });
     }
@@ -248,11 +249,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unhide();
      */
     async unhide () {
-        return this._fetch('api/unhide', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/unhide', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    hidden: Object.keys(data).length === 0 ? false : true
+                    hidden: false
                 }, this.snooWrapped);
             });
     }
@@ -263,11 +264,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').markSpoiler();
      */
     async spoiler () {
-        return this._fetch('api/spoiler', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/spoiler', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    spoilered: Object.keys(data).length === 0 ? true : false
+                    spoilered: true
                 }, this.snooWrapped);
             });
     }
@@ -277,11 +278,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unmarkSpoiler();
      */
     async unspoiler () {
-        return this._fetch('api/unspoiler', { method: 'POST', query: { id: this.name } })
-            .then(data => {
+        return this._fetch<{}>('api/unspoiler', { method: 'POST', query: { id: this.name } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    spoilered: Object.keys(data).length === 0 ? false : true
+                    spoilered: false
                 }, this.snooWrapped);
             });
     }
@@ -294,11 +295,11 @@ export class Submission<Data extends {
     async sticky (slot: 1 | 2) {
         if (!slot || ![1, 2].includes(slot)) throw new RequiredArgumentError('slot');
 
-        return this._fetch('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, num: slot } })
-            .then(data => {
+        return this._fetch<{}>('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, num: slot } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    stickied: Object.keys(data).length === 0 ? true : false
+                    stickied: true
                 }, this.snooWrapped);
             });
     }
@@ -308,11 +309,11 @@ export class Submission<Data extends {
      * @example await sW.getSubmission('2np694').unsticky();
      */
     async unsticky () {
-        return this._fetch('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, state: false } })
-            .then(data => {
+        return this._fetch<{}>('api/set_subreddit_sticky', { method: 'POST', query: { id: this.name, state: false } })
+            .then(() => {
                 return new Submission({
                     ...this.data,
-                    stickied: Object.keys(data).length === 0 ? false : true
+                    stickied: false
                 }, this.snooWrapped);
             });
     }

@@ -4,7 +4,7 @@ import { hasFullnamePrefix } from "./has-fullname-prefix";
 /**
 * Returns an item's name with it's prefix.
 */
-export function addFullnamePrefix (item: string | RedditContent, prefix: string) {
+export function addFullnamePrefix (item: string | RedditContent<any>, prefix: string) {
     if (typeof item === 'string') {
       return hasFullnamePrefix(item) ? item : prefix + item;
     }

@@ -5,6 +5,13 @@ import * as askRedditArticle from '../_mocks/r/AskReddit/comments/article';
 import * as publicSfwSubArticle from '../_mocks/r/public_sfw_sub/comments/article';
 import { About as OmgImAlexisAbout } from '../_mocks/user/OmgImAlexis/about';
 
+const errors = {
+    403: {
+        "message": "Forbidden",
+        "error": 403
+    }
+}
+
 export const mockServer = setupServer(
     rest.post('https://www.reddit.com/api/v1/access_token', (req, res, ctx) => {
         return res(ctx.json({
@@ -20,46 +27,55 @@ export const mockServer = setupServer(
     }),
     rest.post('https://oauth.reddit.com/api/marknsfw', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.over_18 = true;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/unmarknsfw', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.over_18 = false;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/lock', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.locked = true;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/unlock', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.locked = false;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/hide', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.hidden = true;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/unhide', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.hidden = false;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/spoiler', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.spoiler = true;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/unspoiler', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         info[id].data.children[0].data.spoiler = false;
         return res(ctx.json({}));
     }),
     rest.post('https://oauth.reddit.com/api/set_subreddit_sticky', (req, res, ctx) => {
         const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
         const slot = req.url.searchParams.get('num');
         info[id].data.children[0].data.stickied = slot === '1' || slot === '2';
         return res(ctx.json({}));

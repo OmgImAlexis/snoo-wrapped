@@ -268,6 +268,12 @@ test.serial('sticky()', async t => {
         await submission.sticky('');
     }, { instanceOf: RequiredArgumentError });
 
+    // Can't sticky non-existent submission
+    const nonExistentSubmission = snooWrapped.getSubmission('aaaaaa');
+    t.throwsAsync(async () => {
+        await nonExistentSubmission.sticky(1);
+    }, { message: '403 Forbidden' });
+
     // Sticky
     const updatedSubmission = await submission.sticky(1);
 
@@ -281,6 +287,12 @@ test.serial('sticky()', async t => {
 
 test.serial('unsticky()', async t => {
     const { snooWrapped } = t.context;
+
+    // Can't unsticky non-existent submission
+    const nonExistentSubmission = snooWrapped.getSubmission('aaaaaa');
+    t.throwsAsync(async () => {
+        await nonExistentSubmission.unsticky();
+    }, { message: '403 Forbidden' });
 
     // Get submission
     const submission = snooWrapped.getSubmission('ovklvg');

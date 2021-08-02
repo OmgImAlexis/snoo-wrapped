@@ -68,7 +68,7 @@ export class Comment<Data extends {
     public archived?: boolean;
     public subredditType?: SubredditType;
     public subreddit?: Subreddit;
-    public author: any;
+    public author?: RedditUser;
     public votes: { up?: number; down?: number; };
     
     constructor(data: Data, snooWrapped: SnooWrapped) {

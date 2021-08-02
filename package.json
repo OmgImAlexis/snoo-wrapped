@@ -12,7 +12,7 @@
     "build": "tsup ./src/snoo-wrapped.ts --dts-resolve",
     "test": "ava ./test/**/*.spec.ts -v",
     "test:coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
-    "type:coverage": "typescript-coverage-report",
+    "type:coverage": "typescript-coverage-report --ignore-files 'test/_mocks/**/*'",
     "coverage": "npm run type:coverage && npm run test:coverage",
     "bundle-size": "bundlesize",
     "codechecks": "codechecks"
@@ -98,5 +98,8 @@
     "require": [
       "ts-node/register/transpile-only"
     ]
-  }
+  },
+  "typeCoverage": {
+    "atLeast": 100
+  }  
 }
