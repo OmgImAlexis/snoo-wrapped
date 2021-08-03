@@ -56,7 +56,7 @@
     "@typescript-eslint/parser": "^4.28.4",
     "api-mocking-proxy": "^1.1.0",
     "ava": "^3.15.0",
-    "bundlesize2": "0.0.28",
+    "bundlesize2": "0.0.29",
     "dotenv": "^10.0.0",
     "eslint": "^7.31.0",
     "eslint-plugin-import": "^2.23.4",
@@ -101,5 +101,5 @@
   },
   "typeCoverage": {
     "atLeast": 100
-  }  
+  }
 }
