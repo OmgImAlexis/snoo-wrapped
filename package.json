@@ -10,10 +10,11 @@
     "prepare": "npm run build",
     "postinstall": "patch-package --exclude //",
     "build": "tsup ./src/snoo-wrapped.ts --dts-resolve",
-    "test": "ava ./test/**/*.spec.ts -v",
+    "test": "ava './test/**/*.spec.ts' -v",
     "test:coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
     "type:coverage": "typescript-coverage-report --ignore-files 'test/_mocks/**/*'",
     "coverage": "npm run type:coverage && npm run test:coverage",
+    "coverage:open": "npm run coverage && open coverage-ts/index.html && open coverage/lcov-report/index.html",
     "bundle-size": "bundlesize",
     "codechecks": "codechecks"
   },
@@ -28,10 +29,13 @@
     "reddit",
     "api",
     "wrapper",
+    "wrapped",
     "praw",
     "snoo",
     "snoowrapped",
-    "snoowrap"
+    "snoowrap",
+    "snoowrapper",
+    "snoo-wrapped"
   ],
   "author": "OmgImAlexis <xo@wvvw.me>",
   "bugs": {

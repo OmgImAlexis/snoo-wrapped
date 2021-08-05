@@ -67,7 +67,6 @@ export class RedditUser<Data extends RedditUserData = RedditUserData> extends Re
 
     protected _populate(data: MissingEndpoint | RawResult) {
         if ('error' in data && data.error === 404) return;
-        if ('kind' in data && data.kind !== 't2') return;
 
         const redditUserData = (data as RawResult).data;
 
