@@ -7,6 +7,8 @@ import { Submission } from "./objects/submission";
 
 type accessToken = {
     accessToken: string;
+    tokenExpiration: Date;
+    scope: string[];
 };
 type refreshToken = {
     clientId: string;
@@ -60,8 +62,10 @@ export class SnooWrapped {
         this.#clientSecret = opts.clientSecret;
         this.#refreshToken = opts.refreshToken;
         this.#accessToken = opts.accessToken;
+        this.#tokenExpiration = opts.tokenExpiration;
         this.#username = opts.username;
         this.#password = opts.password;
+        this.#scope = opts.scope;
     }
 
     updateAccessToken(accessToken: string, expiration: Date, scope: string[]) {

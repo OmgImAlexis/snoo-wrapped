@@ -1,4 +1,3 @@
-import util from 'util';
 import fetch, { Headers } from 'node-fetch';
 import mergeDeep from 'merge-deep';
 import { RequiredArgumentError } from '../errors/required-argument-erorr';
@@ -30,7 +29,7 @@ export class RedditContent<Data extends { name: string; }> {
     protected data: Data;
 
     constructor(data: Data, snooWrapped: SnooWrapped) {
-        if (!data.name) throw new RequiredArgumentError('data.name');
+        if (!data?.name) throw new RequiredArgumentError('data.name');
         if (!snooWrapped) throw new RequiredArgumentError('snooWrapped');
 
         // Save data
@@ -46,7 +45,7 @@ export class RedditContent<Data extends { name: string; }> {
         if (process.env.DEBUG) return this;
 
         // Strip off protected fields
-        const { data: _data, snooWrapped: _snooWrapped, ...that } = this as unknown as { data?: Data; snooWrapped?: SnooWrapped };
+        const { data: _data, snooWrapped: _snooWrapped, ...that } = this;
         return that;
     }
 
@@ -63,7 +62,7 @@ export class RedditContent<Data extends { name: string; }> {
     }
 
     async fetch<T = this>() {
-        return this._fetchAndPopulate(this.uri) as Promise<T>;
+        return this._fetchAndPopulate<T>(this.uri);
     }
 
     private async _updateAccessToken () {
@@ -71,7 +70,7 @@ export class RedditContent<Data extends { name: string; }> {
         if (
             (!this.snooWrapped.credentials.accessToken || Date.now() > (this.snooWrapped.credentials.tokenExpiration?.getTime() || 0)) &&
             (this.snooWrapped.credentials.refreshToken || (this.snooWrapped.credentials.username && this.snooWrapped.credentials.password))
-        ) {            
+        ) {
             // Build headers
             const headers = new Headers();
             headers.append("Authorization", `Basic ${Buffer.from(`${this.snooWrapped.credentials.clientId}:${this.snooWrapped.credentials.clientSecret}`).toString('base64')}`);
@@ -106,9 +105,7 @@ export class RedditContent<Data extends { name: string; }> {
                 }
             } else {
                 // Save access token
-                this.snooWrapped.credentials.accessToken = response.access_token;
-                this.snooWrapped.credentials.tokenExpiration = new Date(Date.now() + (response.expires_in * 1000));
-                this.snooWrapped.credentials.scope = response.scope.split(',');
+                this.snooWrapped.updateAccessToken(response.access_token, new Date(Date.now() + (response.expires_in * 1000)), response.scope.split(','));
 
                 // Return the newly saved token
                 return response.access_token;
@@ -146,7 +143,7 @@ export class RedditContent<Data extends { name: string; }> {
             });
     }
 
-    protected async _fetchAndPopulate(uri: string, { query, ...options }: Parameters<typeof fetch>[1] & { query?: Record<string, any>; } = {}, attempts = 1) {
-        return this._fetch(uri, options).then(response => this._populate(response));
+    protected async _fetchAndPopulate<T = this>(uri: string, { query, ...options }: Parameters<typeof fetch>[1] & { query?: Record<string, any>; } = {}, attempts = 1) {
+        return this._fetch(uri, options).then(response => this._populate(response) as T);
     }
 }
