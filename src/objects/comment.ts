@@ -56,7 +56,7 @@ export class Comment<Data extends CommentData = CommentData> extends RedditConte
     public subredditType?: SubredditType;
     public subreddit?: Subreddit;
     public author?: RedditUser;
-    public votes: { up?: number; down?: number; };
+    public votes?: { up?: number; down?: number; };
     
     constructor(data: Data, snooWrapped: SnooWrapped) {
         super(data, snooWrapped);
@@ -64,10 +64,10 @@ export class Comment<Data extends CommentData = CommentData> extends RedditConte
         this.submission = data.submission;
         this.subreddit = data.subreddit;
         this.author = data.author;
-        this.votes = {
+        this.votes = data.votes ? {
             up: data.votes?.up,
             down: data.votes?.down,
-        };
+        } : undefined;
         this.created = data.created;
         this.edited = data.edited;
         this.gilded = data.gilded;

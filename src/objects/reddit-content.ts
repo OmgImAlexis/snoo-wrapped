@@ -41,15 +41,17 @@ export class RedditContent<Data extends { name: string; }> {
         this.snooWrapped = snooWrapped;
     }
 
-    [util.inspect.custom]() {
+    [Symbol.for('nodejs.util.inspect.custom')]() {
         // In debug mode return whole object
         if (process.env.DEBUG) return this;
 
         // Strip off protected fields
-        const that = this as unknown as { data?: Data; snooWrapped?: SnooWrapped };
-        delete that.data;
-        delete that.snooWrapped;
+        const { data: _data, snooWrapped: _snooWrapped, ...that } = this as unknown as { data?: Data; snooWrapped?: SnooWrapped };
         return that;
+    }
+
+    toJSON() {
+        return this[Symbol.for('nodejs.util.inspect.custom')]();
     }
 
     protected get uri() {
@@ -122,7 +124,7 @@ export class RedditContent<Data extends { name: string; }> {
         const accessToken = await this._updateAccessToken();
 
         // Resolve URL
-        const url = new URL(uri, process.env.MOCK_URL ?? 'https://oauth.reddit.com/');
+        const url = new URL(uri, 'https://oauth.reddit.com/');
         Object.entries(query ?? {}).forEach(([key, value]) => {
             url.searchParams.append(key, String(value));
         });

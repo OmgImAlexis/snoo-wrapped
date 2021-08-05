@@ -28,7 +28,7 @@ test.before(t => {
     };
 })
 
-test.serial('credentials', t => {
+test('credentials', t => {
     const { userAgent, accessToken, clientId, clientSecret, refreshToken, username, password } = t.context;
 
     // OK
@@ -81,7 +81,19 @@ test.serial('credentials', t => {
     }, { instanceOf: MissingCredentialsError });
 });
 
-test.serial('getComment()', t => {
+test('updateAccessToken()', t => {
+    const { snooWrapped } = t.context;
+
+    const accessToken = '';
+    const expirationDate = new Date(500000000);
+    const scope = ['*'];
+    snooWrapped.updateAccessToken(accessToken, expirationDate, scope);
+    t.is(snooWrapped.credentials.accessToken, accessToken);
+    t.is(snooWrapped.credentials.tokenExpiration, expirationDate);
+    t.is(snooWrapped.credentials.scope, scope);
+});
+
+test('getComment()', t => {
     const { snooWrapped } = t.context;
 
     // OK
@@ -90,7 +102,7 @@ test.serial('getComment()', t => {
     });
 });
 
-test.serial('getUser()', t => {
+test('getUser()', t => {
     const { snooWrapped } = t.context;
 
     // OK
@@ -99,7 +111,7 @@ test.serial('getUser()', t => {
     });
 });
 
-test.serial('getSubmission()', t => {
+test('getSubmission()', t => {
     const { snooWrapped } = t.context;
 
     // OK

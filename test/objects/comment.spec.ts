@@ -1,10 +1,10 @@
 import ava, { TestInterface } from 'ava';
-import { RequiredArgumentError } from '../src/errors/required-argument-erorr';
-import { Comment } from '../src/objects/comment';
-import { Submission } from '../src/objects/submission';
-import { SnooWrapped } from '../src/snoo-wrapped';
-import { credentials } from './_helpers/credentials';
-import { mockServer } from './_helpers/mock-fetch';
+import { RequiredArgumentError } from '../../src/errors/required-argument-erorr';
+import { Comment } from '../../src/objects/comment';
+import { Submission } from '../../src/objects/submission';
+import { SnooWrapped } from '../../src/snoo-wrapped';
+import { credentials } from '../_helpers/credentials';
+import { mockServer } from '../_helpers/mock-fetch';
 
 const test = ava as TestInterface<{
     snooWrapped: SnooWrapped;
@@ -25,7 +25,7 @@ test.afterEach(() => mockServer.resetHandlers());
 // Disable API mocking after the tests are done.
 test.after(() => mockServer.close());
 
-test.serial('constructor', t => {
+test('constructor', t => {
     const { snooWrapped } = t.context;
 
     // OK
@@ -44,6 +44,13 @@ test.serial('constructor', t => {
         // @ts-expect-error
         new Submission({});
     }, { instanceOf: RequiredArgumentError });
+});
+
+test('toJSON()', t => {
+    const { snooWrapped } = t.context;
+
+    const comment = new Comment({ name: 'cmfwyl2' }, snooWrapped);
+    t.is(JSON.stringify(comment), JSON.stringify({ name: 'cmfwyl2' }));
 });
 
 test.serial('fetch()', async t => {

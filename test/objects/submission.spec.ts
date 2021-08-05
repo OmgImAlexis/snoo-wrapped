@@ -1,9 +1,9 @@
 import ava, { TestInterface } from 'ava';
-import { RequiredArgumentError } from '../src/errors/required-argument-erorr';
-import { Submission } from '../src/objects/submission';
-import { SnooWrapped } from '../src/snoo-wrapped';
-import { credentials } from './_helpers/credentials';
-import { mockServer } from './_helpers/mock-fetch';
+import { RequiredArgumentError } from '../../src/errors/required-argument-erorr';
+import { Submission } from '../../src/objects/submission';
+import { SnooWrapped } from '../../src/snoo-wrapped';
+import { credentials } from '../_helpers/credentials';
+import { mockServer } from '../_helpers/mock-fetch';
 
 const test = ava as TestInterface<{
     snooWrapped: SnooWrapped;
