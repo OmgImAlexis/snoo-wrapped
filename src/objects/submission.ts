@@ -2,9 +2,9 @@ import { RequiredArgumentError } from "../errors/required-argument-erorr";
 import { SnooWrapped } from "../snoo-wrapped";
 import { SubredditType } from "../types";
 import { Comment, RawComment } from "./comment";
-import { RedditContent } from "./reddit-content";
 import { RedditUser } from "./reddit-user";
 import { Subreddit } from "./subreddit";
+import { VoteableContent } from "./votable-content";
 
 interface RawSubmission {
     title: string;
@@ -26,6 +26,7 @@ interface RawSubmission {
     permalink: string;
     stickied: boolean;
     subreddit_subscribers: number;
+    removed_by: string | null;
 }
 
 interface RawResult {
@@ -64,7 +65,7 @@ interface SubmissionData {
     locked?: boolean;
 }
 
-export class Submission<Data extends SubmissionData = SubmissionData> extends RedditContent<Data> {
+export class Submission<Data extends SubmissionData = SubmissionData> extends VoteableContent<Data> {
     public subreddit?: Subreddit;
     public comments?: Comment[];
     public title?: string;
@@ -156,6 +157,7 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Re
             hidden: submissionData.hidden,
             permalink: submissionData.permalink,
             stickied: submissionData.stickied,
+            removed: typeof submissionData.removed_by === 'string' && submissionData.removed_by.length >= 2
         }, this.snooWrapped);
     }
 
@@ -302,5 +304,45 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Re
                     stickied: false
                 }, this.snooWrapped);
             });
+    }
+
+    /**
+     * Removes this submission from public listings.
+     * This requires the authenticated user to be a moderator of the subreddit with the `posts` permission.
+     * @param options
+     * @param options.spam Determines whether this should be marked as spam
+     */
+    async remove({ spam = false } = {}) {
+        return this._remove({ spam });
+    }
+
+    /**
+     * Approves this submission, re-adding it to public listings if it had been removed.
+     * @example r.getComment('c08pp5z').approve()
+     */
+    async approve() {
+        return this._approve();
+    }
+
+    /**
+     * Adds a new comment to this submission.
+     * @example await sW.getSubmission('4e60m3').reply('This was an interesting post. Thanks.');
+     * @param content The content of the comment, in raw markdown text.
+     */
+    async reply(content: string) {
+        return this._reply(content);
+    }
+
+    /**
+     * Blocks the author of this submission.
+     * **Note:** In order for this function to have an effect, this submission **must** be in the authenticated account's inbox or modmail somewhere.
+     * The reddit API gives no outward indication of whether this condition is satisfied, so the returned Promise will fulfill even if this is not the case.
+     * @example
+     *
+     * const messages = await sW.getInbox({ limit: 1 });
+     * await messages[0].blockAuthor();
+     */
+    async blockAuthor() {
+        return this._blockAuthor();
     }
 }
