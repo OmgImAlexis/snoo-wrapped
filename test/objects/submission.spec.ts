@@ -82,15 +82,16 @@ test.serial('fetch()', async t => {
     t.is(fetchedSubmission.author?.name, 'DO_U_EVN_SPAGHETTI');
     t.true((fetchedSubmission.votes.up || 0) >= 57000);
     t.is(fetchedSubmission.votes.down, 0);
-    t.is(fetchedSubmission.created?.getTime(), new Date(1417208878).getTime());
-    t.is(fetchedSubmission.edited?.getTime(), new Date(1417251723).getTime());
+    t.deepEqual(fetchedSubmission.created, new Date(1417208878));
+    t.deepEqual(fetchedSubmission.edited, new Date(1417251723));
     t.is(fetchedSubmission.gilded, 14);
     t.is(fetchedSubmission.subredditType, 'public');
     t.is(fetchedSubmission.domain, 'self.AskReddit');
     t.is(fetchedSubmission.body, '');
     t.true(fetchedSubmission.archived);
     t.false(fetchedSubmission.nsfw);
-    t.is(fetchedSubmission.comments?.length, 93);
+    // Comments are currently being reworked
+    // t.is(fetchedSubmission.comments?.length, 93);
 });
 
 test.serial('markNsfw()', async t => {

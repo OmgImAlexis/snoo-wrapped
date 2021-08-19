@@ -63,7 +63,7 @@ test('if the accessToken is expired it gets refreshed before trying the request'
 
     // Credentials are different to what we passed in
     t.not(snooWrapped.credentials.accessToken, accessToken);
-    t.not(snooWrapped.credentials.tokenExpiration?.getTime(), tokenExpiration.getTime());
+    t.not(snooWrapped.credentials.tokenExpiration, tokenExpiration);
     t.deepEqual(snooWrapped.credentials.scope, scope);
 
     // Fetch worked
@@ -94,7 +94,7 @@ test('the existing accessToken is used for the request if it\'s still valid and 
     t.is(snooWrapped.credentials.password, password);
     t.is(snooWrapped.credentials.accessToken, accessToken);
     t.is(snooWrapped.credentials.refreshToken, refreshToken);
-    t.is(snooWrapped.credentials.tokenExpiration?.getTime(), tokenExpiration.getTime());
+    t.is(snooWrapped.credentials.tokenExpiration, tokenExpiration);
     t.is(snooWrapped.credentials.scope, scope);
 
     // Fetch worked

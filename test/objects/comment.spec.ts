@@ -1,7 +1,6 @@
 import ava, { TestInterface } from 'ava';
 import { RequiredArgumentError } from '../../src/errors/required-argument-erorr';
 import { Comment } from '../../src/objects/comment';
-import { Submission } from '../../src/objects/submission';
 import { SnooWrapped } from '../../src/snoo-wrapped';
 import { credentials } from '../_helpers/credentials';
 import { mockServer } from '../_helpers/mock-fetch';
@@ -36,13 +35,13 @@ test('constructor', t => {
     // Missing "name"
     t.throws(() => {
         // @ts-expect-error
-        new Submission({}, snooWrapped);
+        new Comment({}, snooWrapped);
     }, { instanceOf: RequiredArgumentError });
 
     // Missing "snooWrapped"
     t.throws(() => {
         // @ts-expect-error
-        new Submission({});
+        new Comment({});
     }, { instanceOf: RequiredArgumentError });
 });
 
@@ -82,10 +81,10 @@ test.serial('fetch()', async t => {
     t.true(fetchedComment instanceof Comment);
     t.is(fetchedComment.name, 't1_c0b6xx0');
     t.is(fetchedComment.author?.name, 'Kharos');
-    t.true((fetchedComment.votes.up || 0) >= 6200);
-    t.is((fetchedComment.votes.down || 0), 0);
-    t.is(fetchedComment.created?.getTime(), new Date(1247932861).getTime());
-    t.is(fetchedComment.edited?.getTime(), 0);
+    t.true((fetchedComment.votes?.up || 0) >= 6200);
+    t.is((fetchedComment.votes?.down || 0), 0);
+    t.deepEqual(fetchedComment.created, new Date('2009-07-18 16:01:01 UTC'));
+    t.is(fetchedComment.edited, undefined);
     t.is(fetchedComment.gilded, 3);
     t.is(fetchedComment.subredditType, 'public');
     t.is(fetchedComment.body, 'Don\'t tell me what to do!\nUpvoted.');

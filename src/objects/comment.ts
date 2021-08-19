@@ -77,25 +77,28 @@ export class Comment<Data extends CommentData = CommentData> extends VoteableCon
         this.archived = data.archived;
     }
 
-    protected _populate(data: RawResult) {
-        const commentData = data.data.children[0].data;
-
+    static from (snooWrapped: SnooWrapped, rawComment: RawComment, commentData: Partial<CommentData> = {}) {
         return new Comment({
-            ...this.data,
-            submission: new Submission({ name: commentData.parent_id }, this.snooWrapped),
-            author: new RedditUser({ name: commentData.author }, this.snooWrapped),
-            subreddit: commentData.subreddit,
+            ...commentData,
+            name: rawComment.name,
+            submission: new Submission({ name: rawComment.parent_id }, snooWrapped),
+            author: new RedditUser({ name: rawComment.author }, snooWrapped),
+            subreddit: new Subreddit({ name: rawComment.subreddit }, snooWrapped),
             votes: {
-                up: commentData.ups,
-                down: commentData.downs
+                up: rawComment.ups,
+                down: rawComment.downs
             },
-            created: new Date(commentData.created),
-            edited: new Date(commentData.edited),
-            gilded: commentData.gilded,
-            subredditType: commentData.subreddit_type,
-            body: commentData.body,
-            archived: commentData.archived
-        }, this.snooWrapped);
+            created: new Date(rawComment.created * 1000),
+            edited: rawComment.edited ? new Date(rawComment.edited * 1000) : undefined,
+            gilded: rawComment.gilded,
+            subredditType: rawComment.subreddit_type,
+            body: rawComment.body,
+            archived: rawComment.archived
+        }, snooWrapped);
+    }
+
+    protected _populate(data: RawResult) {
+        return Comment.from(this.snooWrapped, data.data.children[0].data, this.data);
     }
 
     protected get uri() {

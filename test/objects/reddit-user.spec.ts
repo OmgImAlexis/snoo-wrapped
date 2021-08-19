@@ -36,13 +36,13 @@ test.serial('constructor', t => {
     // Missing "name"
     t.throws(() => {
         // @ts-expect-error
-        new Submission({}, snooWrapped);
+        new RedditUser({}, snooWrapped);
     }, { instanceOf: RequiredArgumentError });
 
     // Missing "snooWrapped"
     t.throws(() => {
         // @ts-expect-error
-        new Submission({});
+        new RedditUser({});
     }, { instanceOf: RequiredArgumentError });
 });
 
@@ -54,7 +54,7 @@ test.serial('fetch()', async t => {
         await snooWrapped.getUser('OmgImAlexis').fetch();
     });
 
-    // Returns an unfetched "Submission"
+    // Returns an unfetched "RedditUser"
     const redditUser = snooWrapped.getUser('OmgImAlexis');
     t.not(redditUser, undefined);
     t.true(redditUser instanceof RedditUser);
@@ -70,13 +70,13 @@ test.serial('fetch()', async t => {
     t.is(redditUser.karma?.link, undefined);
     t.is(redditUser.karma?.total, undefined);
 
-    // Returns a fetched "fetchedRedditUser"
+    // Returns a fetched "RedditUser"
     const fetchedRedditUser = await redditUser.fetch();
     t.not(fetchedRedditUser, undefined);
     t.true(fetchedRedditUser instanceof RedditUser);
     t.is(fetchedRedditUser.name, 'OmgImAlexis');
     t.is(fetchedRedditUser.id, 'f29oz');
-    t.is(fetchedRedditUser.created?.getTime(), new Date(1391176276).getTime());
+    t.deepEqual(fetchedRedditUser.created, new Date(1391176276));
     t.true(fetchedRedditUser.isGold);
     t.true(fetchedRedditUser.isMod);
     t.true(fetchedRedditUser.isVerified);

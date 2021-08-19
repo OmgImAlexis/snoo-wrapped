@@ -4,6 +4,8 @@ import * as info from '../_mocks/oauth.reddit.com/api/info';
 import * as askRedditArticle from '../_mocks/r/AskReddit/comments/article';
 import * as publicSfwSubArticle from '../_mocks/r/public_sfw_sub/comments/article';
 import { About as OmgImAlexisAbout } from '../_mocks/user/OmgImAlexis/about';
+import { About as AskRedditAbout } from '../_mocks/r/AskReddit/about';
+import { NewSubmissions as AskRedditNewSubmissions } from '../_mocks/r/AskReddit/new';
 
 const errors = {
     403: {
@@ -88,7 +90,13 @@ export const mockServer = setupServer(
         const article = req.url.searchParams.get('article');
         return res(ctx.json(publicSfwSubArticle[`t3_${article}`]));
     }),
-    rest.get('https://oauth.reddit.com/user/OmgImAlexis/about', (req, res, ctx) => {
+    rest.get('https://oauth.reddit.com/user/OmgImAlexis/about', (_req, res, ctx) => {
         return res(ctx.json(OmgImAlexisAbout));
-    })
+    }),
+    rest.get('https://oauth.reddit.com/r/AskReddit/about', (_req, res, ctx) => {
+        return res(ctx.json(AskRedditAbout));
+    }),
+    rest.get('https://oauth.reddit.com/r/AskReddit/new', (_req, res, ctx) => {
+        return res(ctx.json(AskRedditNewSubmissions));
+    }),
 );

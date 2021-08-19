@@ -6,7 +6,7 @@ import { RedditUser } from "./reddit-user";
 import { Subreddit } from "./subreddit";
 import { VoteableContent } from "./votable-content";
 
-interface RawSubmission {
+export interface RawSubmission {
     title: string;
     name: string;
     subreddit: string;
@@ -63,6 +63,7 @@ interface SubmissionData {
     stickied?: boolean;
     subscribers?: number;
     locked?: boolean;
+    removed?: boolean;
 }
 
 export class Submission<Data extends SubmissionData = SubmissionData> extends VoteableContent<Data> {
@@ -112,53 +113,55 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
         this.locked = data.locked;
     }
 
+    static from(snooWrapped: SnooWrapped, rawSubmission: RawSubmission, submissionData: Partial<SubmissionData> = {}): Submission<SubmissionData> {
+        return new Submission({
+            ...submissionData,
+            name: rawSubmission.name,
+            author: new RedditUser({ name: rawSubmission.author }, snooWrapped),
+            subreddit: new Subreddit({ name: rawSubmission.subreddit, subscribers: rawSubmission.subreddit_subscribers }, snooWrapped),
+            title: rawSubmission.title,
+            votes: {
+                up: rawSubmission.ups,
+                down: rawSubmission.downs
+            },
+            created: new Date(rawSubmission.created),
+            edited: new Date(rawSubmission.edited),
+            gilded: rawSubmission.gilded,
+            subredditType: rawSubmission.subreddit_type,
+            domain: rawSubmission.domain,
+            body: rawSubmission.selftext,
+            archived: rawSubmission.archived,
+            nsfw: rawSubmission.over_18,
+            spoilered: rawSubmission.spoiler,
+            hidden: rawSubmission.hidden,
+            permalink: rawSubmission.permalink,
+            stickied: rawSubmission.stickied,
+            removed: typeof rawSubmission.removed_by === 'string' && rawSubmission.removed_by.length >= 2
+        }, snooWrapped);
+    }
+
     protected get uri() {
         return `api/info/?id=${this.name}`;
     }
 
     protected async _populate(data: RawResult) {
-        const submissionData = (data as RawResult).data.children[0].data;
-        const comments = await this._fetch<[RawSubmission, {
-            kind: 'Listing',
-            data: {
-                children: [{
-                    kind: 't1',
-                    data: RawComment;
-                }]
-            }
-        }]>(`r/${submissionData.subreddit}/comments/article`, {
-                query: {
-                    limit: 1000,
-                    showmore: true,
-                    article: submissionData.name.substring(3)
-                }
-            })
-            .then(([, comments]) => comments.data.children.map(child => child.data));
-
-        return new Submission({
-            ...this.data,
-            author: new RedditUser({ name: submissionData.author }, this.snooWrapped),
-            subreddit: new Subreddit({ name: submissionData.subreddit, subscribers: submissionData.subreddit_subscribers }, this.snooWrapped),
-            title: submissionData.title,
-            votes: {
-                up: submissionData.ups,
-                down: submissionData.downs
-            },
-            created: new Date(submissionData.created),
-            edited: new Date(submissionData.edited),
-            gilded: submissionData.gilded,
-            subredditType: submissionData.subreddit_type,
-            domain: submissionData.domain,
-            body: submissionData.selftext,
-            archived: submissionData.archived,
-            nsfw: submissionData.over_18,
-            comments: comments.map(comment => new Comment({ name: comment.name }, this.snooWrapped)),
-            spoilered: submissionData.spoiler,
-            hidden: submissionData.hidden,
-            permalink: submissionData.permalink,
-            stickied: submissionData.stickied,
-            removed: typeof submissionData.removed_by === 'string' && submissionData.removed_by.length >= 2
-        }, this.snooWrapped);
+        // const comments = await this._fetch<[RawSubmission, {
+        //     kind: 'Listing',
+        //     data: {
+        //         children: [{
+        //             kind: 't1',
+        //             data: RawComment;
+        //         }]
+        //     }
+        // }]>(`r/${rawSubmission.subreddit}/comments/article`, {
+        //         query: {
+        //             limit: 1000,
+        //             showmore: true,
+        //             article: rawSubmission.name.substring(3)
+        //         }
+        //     })
+        //     .then(([, comments]) => comments.data.children.map(child => new Comment(child.data, this.snooWrapped)));
+        return Submission.from(this.snooWrapped, data.data.children[0].data, this.data);
     }
 
     /**

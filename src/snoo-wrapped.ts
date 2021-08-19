@@ -4,6 +4,7 @@ import { RedditUser } from "./objects/reddit-user";
 import { Comment } from "./objects/comment";
 import { addFullnamePrefix } from "./utils/add-fullname-prefix";
 import { Submission } from "./objects/submission";
+import { Subreddit } from "./objects/subreddit";
 
 type accessToken = {
     accessToken: string;
@@ -127,5 +128,19 @@ export class SnooWrapped {
      */
     getSubmission(submissionId: string): Submission {
         return new Submission({ name: addFullnamePrefix(submissionId, 't3_') }, this);
+    }
+
+    /**
+     * Gets information on a given submission.
+     * @param submissionId The base36 id of the submission.
+     * @example
+     *
+     * sW.getSubreddit('AskReddit');
+     * // => Subreddit { name: 'AskReddit' }
+     * sW.getSubreddit('AskReddit').then(subreddit => console.log(subreddit.title));
+     * // => 'AskReddit'
+     */
+    getSubreddit(name: string): Subreddit {
+        return new Subreddit({ name }, this);
     }
 }
