@@ -1,8 +1,9 @@
 import { SnooWrapped } from "../snoo-wrapped";
 import { SubredditType } from "../types";
-import { RedditContent } from "./reddit-content";import { RedditUser } from "./reddit-user";
+import { RedditUser } from "./reddit-user";
 import { Submission } from "./submission";
 import { Subreddit } from "./subreddit";
+import { VoteableContent } from "./votable-content";
 
 export interface RawComment {
     name: string;
@@ -46,7 +47,7 @@ interface CommentData {
     };
 }
 
-export class Comment<Data extends CommentData = CommentData> extends RedditContent<Data> {
+export class Comment<Data extends CommentData = CommentData> extends VoteableContent<Data> {
     public submission?: Submission;
     public body?: string;
     public created?: Date;
@@ -99,5 +100,27 @@ export class Comment<Data extends CommentData = CommentData> extends RedditConte
 
     protected get uri() {
         return `api/info/?id=${this.name}`;
+    }
+
+    /**
+     * Adds a new comment to a parent comment.
+     * @example await sW.getComment('4e60m3').reply('This was an interesting comment. Thanks.');
+     * @param content The content of the comment, in raw markdown text.
+     */
+    async reply(content: string) {
+        return this._reply(content);
+    }
+
+    /**
+     * Blocks the author of this comment.
+     * **Note:** In order for this function to have an effect, this comment **must** be in the authenticated account's inbox or modmail somewhere.
+     * The reddit API gives no outward indication of whether this condition is satisfied, so the returned Promise will fulfill even if this is not the case.
+     * @example
+     *
+     * const messages = await sW.getInbox({ limit: 1 });
+     * await messages[0].blockAuthor();
+     */
+     async blockAuthor() {
+        return this._blockAuthor();
     }
 }
