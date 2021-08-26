@@ -29,7 +29,7 @@ interface RawSubmissionsResult {
     kind: 'Listing',
     data: {
         children: {
-            kind: 't2' | 't3',
+            kind: 't1' | 't3',
             data: RawSubmission | RawComment;
         }[]
     }
@@ -73,7 +73,7 @@ export class Subreddit<Data extends SubredditData = SubredditData> extends Reddi
         const rawSubmissionsAndComments = await this._fetch<RawSubmissionsResult>(`r/${this.name}/new`, { method: 'GET', query: { count: 100 } });
         return rawSubmissionsAndComments.data.children.map(rawSubmissionOrComment => {
             if (rawSubmissionOrComment.kind === 't3') return Submission.from(this.snooWrapped, rawSubmissionOrComment.data as RawSubmission);
-            if (rawSubmissionOrComment.kind === 't2') return Comment.from(this.snooWrapped, rawSubmissionOrComment.data as RawComment);
+            if (rawSubmissionOrComment.kind === 't1') return Comment.from(this.snooWrapped, rawSubmissionOrComment.data as RawComment);
         }).filter(_ => _ !== undefined) as (Submission | Comment)[];
     }
 
