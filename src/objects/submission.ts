@@ -2,7 +2,7 @@ import { RequiredArgumentError } from "../errors/required-argument-erorr";
 import { SnooWrapped } from "../snoo-wrapped";
 import { SubredditType } from "../types";
 import { Comment } from "./comment";
-import { _fetch } from "./reddit-content";
+import { _fetch } from "../objects/reddit-content/_fetch";
 import { RedditUser } from "./reddit-user";
 import { Subreddit } from "./subreddit";
 import { VoteableContent } from "./votable-content";

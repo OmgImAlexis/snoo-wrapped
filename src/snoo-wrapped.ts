@@ -5,7 +5,7 @@ import { Comment } from "./objects/comment";
 import { addFullnamePrefix } from "./utils/add-fullname-prefix";
 import { Submission } from "./objects/submission";
 import { Subreddit } from "./objects/subreddit";
-import { _fetch } from "./objects/reddit-content";
+import { _fetch } from "./objects/reddit-content/_fetch";
 
 type accessToken = {
     accessToken: string;
@@ -179,3 +179,5 @@ export class SnooWrapped {
         return _fetch(this, 'api/v1/me/karma', { method: 'GET' });
     }
 }
+
+export * from './objects';
