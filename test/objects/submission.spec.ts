@@ -82,8 +82,8 @@ test.serial('fetch()', async t => {
     t.is(fetchedSubmission.author?.name, 'DO_U_EVN_SPAGHETTI');
     t.true((fetchedSubmission.votes.up || 0) >= 57000);
     t.is(fetchedSubmission.votes.down, 0);
-    t.deepEqual(fetchedSubmission.created, new Date(1417208878));
-    t.deepEqual(fetchedSubmission.edited, new Date(1417251723));
+    t.deepEqual(fetchedSubmission.created, new Date('2014-11-28 21:07:58 UTC'));
+    t.deepEqual(fetchedSubmission.edited, new Date('2014-11-29 09:02:03 UTC'));
     t.is(fetchedSubmission.gilded, 14);
     t.is(fetchedSubmission.subredditType, 'public');
     t.is(fetchedSubmission.domain, 'self.AskReddit');
@@ -308,4 +308,84 @@ test.serial('unsticky()', async t => {
     // Double check it was actually updated on Reddit
     const fetchedSubmission = await updatedSubmission.fetch();
     t.false(fetchedSubmission.stickied);
+});
+
+test.serial('remove()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.removed, undefined);
+
+    // Remove
+    const updatedSubmission = await submission.remove();
+
+    // Now Submission is removed
+    t.true(updatedSubmission.removed);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.is(fetchedSubmission.removed?.by, 'TestAccount123');
+    t.is(fetchedSubmission.removed?.reason, null);
+    t.is(fetchedSubmission.removed?.category, 'moderator');
+});
+
+test.serial('remove({ spam: true })', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.removed, undefined);
+
+    // Remove
+    const updatedSubmission = await submission.remove({ spam: true });
+
+    // Now Submission is removed
+    t.true(updatedSubmission.removed);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.is(fetchedSubmission.removed?.by, 'TestAccount123');
+    t.is(fetchedSubmission.removed?.reason, null);
+    t.is(fetchedSubmission.removed?.category, 'moderator');
+});
+
+test.serial('approve()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Get submission
+    const submission = snooWrapped.getSubmission('ovklvg');
+    t.is(submission.removed, undefined);
+
+    // Approve
+    const updatedSubmission = await submission.approve();
+
+    // Now Submission is approved
+    t.is(updatedSubmission.removed, undefined);
+
+    // Double check it was actually updated on Reddit
+    const fetchedSubmission = await updatedSubmission.fetch();
+    t.is(fetchedSubmission.removed, undefined);
+});
+
+test.serial('Submission.fetchRandom()', async t => {
+    const { snooWrapped } = t.context;
+
+    // Fetch random submission
+    const randomFetchedSubmission = await Submission.fetchRandom(snooWrapped);
+    t.not(randomFetchedSubmission, undefined);
+    t.true(randomFetchedSubmission instanceof Submission);
+    t.is(randomFetchedSubmission.name, 't3_ayvt9u');
+    t.is(randomFetchedSubmission.title, 'Looking for friendly, more chill chats? Check out our sister sub - it\'s like this sub but more casual... r/CasualConversation');
+    t.is(randomFetchedSubmission.author?.name, 'tizorres');
+    t.is(randomFetchedSubmission.votes.up, 20);
+    t.is(randomFetchedSubmission.votes.down, 0);
+    t.deepEqual(randomFetchedSubmission.created, new Date('2019-03-08 21:50:07 UTC'));
+    t.deepEqual(randomFetchedSubmission.edited, undefined);
+    t.is(randomFetchedSubmission.gilded, 0);
+    t.is(randomFetchedSubmission.subredditType, 'public');
+    t.is(randomFetchedSubmission.domain, 'reddit.com');
+    t.is(randomFetchedSubmission.body, '');
+    t.true(randomFetchedSubmission.archived);
+    t.false(randomFetchedSubmission.nsfw);
 });

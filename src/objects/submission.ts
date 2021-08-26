@@ -1,7 +1,8 @@
 import { RequiredArgumentError } from "../errors/required-argument-erorr";
 import { SnooWrapped } from "../snoo-wrapped";
 import { SubredditType } from "../types";
-import { Comment, RawComment } from "./comment";
+import { Comment } from "./comment";
+import { _fetch } from "./reddit-content";
 import { RedditUser } from "./reddit-user";
 import { Subreddit } from "./subreddit";
 import { VoteableContent } from "./votable-content";
@@ -13,7 +14,7 @@ export interface RawSubmission {
     author: string;
     ups: number;
     downs: number;
-    created: number;
+    created_utc: number;
     edited: number;
     gilded: number;
     subreddit_type: SubredditType;
@@ -27,6 +28,9 @@ export interface RawSubmission {
     stickied: boolean;
     subreddit_subscribers: number;
     removed_by: string | null;
+    removed_by_category?: 'admin' | 'mod';
+    mod_reason_title?: string;
+    ban_note?: string;
 }
 
 interface RawResult {
@@ -63,7 +67,6 @@ interface SubmissionData {
     stickied?: boolean;
     subscribers?: number;
     locked?: boolean;
-    removed?: boolean;
 }
 
 export class Submission<Data extends SubmissionData = SubmissionData> extends VoteableContent<Data> {
@@ -113,6 +116,11 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
         this.locked = data.locked;
     }
 
+    static async fetchRandom(snooWrapped: SnooWrapped) {
+        const randomSubmission = await _fetch<RawResult>(snooWrapped, 'r/random');
+        return Submission.from(snooWrapped, randomSubmission.data.children[0].data);
+    }
+
     static from(snooWrapped: SnooWrapped, rawSubmission: RawSubmission, submissionData: Partial<SubmissionData> = {}): Submission<SubmissionData> {
         return new Submission({
             ...submissionData,
@@ -124,8 +132,8 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
                 up: rawSubmission.ups,
                 down: rawSubmission.downs
             },
-            created: new Date(rawSubmission.created),
-            edited: new Date(rawSubmission.edited),
+            created: new Date(rawSubmission.created_utc * 1000),
+            edited: rawSubmission.edited ? new Date(rawSubmission.edited * 1000) : undefined,
             gilded: rawSubmission.gilded,
             subredditType: rawSubmission.subreddit_type,
             domain: rawSubmission.domain,
@@ -136,7 +144,11 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
             hidden: rawSubmission.hidden,
             permalink: rawSubmission.permalink,
             stickied: rawSubmission.stickied,
-            removed: typeof rawSubmission.removed_by === 'string' && rawSubmission.removed_by.length >= 2
+            removed: (rawSubmission.removed_by && rawSubmission.removed_by_category) ? {
+                by: rawSubmission.removed_by,
+                reason: rawSubmission.mod_reason_title,
+                category: rawSubmission.removed_by_category
+            } : undefined
         }, snooWrapped);
     }
 
@@ -316,15 +328,23 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
      * @param options.spam Determines whether this should be marked as spam
      */
     async remove({ spam = false } = {}) {
-        return this._remove({ spam });
+        await this._remove({ spam });
+        return new Submission({
+            ...this.data,
+            removed: true
+        }, this.snooWrapped);
     }
 
     /**
      * Approves this submission, re-adding it to public listings if it had been removed.
-     * @example r.getComment('c08pp5z').approve()
+     * @example r.getSubmission('c08pp5z').approve()
      */
     async approve() {
-        return this._approve();
+        await this._approve();
+        return new Submission({
+            ...this.data,
+            removed_by: undefined
+        }, this.snooWrapped);
     }
 
     /**

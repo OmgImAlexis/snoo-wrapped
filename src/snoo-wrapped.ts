@@ -5,6 +5,7 @@ import { Comment } from "./objects/comment";
 import { addFullnamePrefix } from "./utils/add-fullname-prefix";
 import { Submission } from "./objects/submission";
 import { Subreddit } from "./objects/subreddit";
+import { _fetch } from "./objects/reddit-content";
 
 type accessToken = {
     accessToken: string;
@@ -89,6 +90,35 @@ export class SnooWrapped {
     }
 
     /**
+     * Gets information on the authenticated user.
+     * 
+     * If you didn't pass in username as a credential you'll need to
+     * use `fetchMe()` as  this will return `undefined`.
+     * @example
+     *
+     * sW.getMe();
+     * // => RedditUser { name: 'phoenix_starship' }
+     * sW.getMe().fetch().then(user => console.log(user.linkKarma));
+     * // => 6
+     */
+    getMe(): RedditUser | undefined {
+        if (this.#username) return new RedditUser({ name: this.#username! }, this);
+    }
+
+    /**
+     * Fetches information on the authenticated user.
+     * 
+     * @example
+     *
+     * sW.fetchMe().then(user => console.log(user.linkKarma));
+     * // => 6
+     */
+    async fetchMe(): Promise<RedditUser> {
+        if (this.#username) return new RedditUser({ name: this.#username! }, this).fetch();
+        return new RedditUser({ name: '' }, this).fetch();
+    }
+
+    /**
      * Gets information on a Reddit user with a given name.
      * @param name The user's username.
      * @example
@@ -142,5 +172,10 @@ export class SnooWrapped {
      */
     getSubreddit(name: string): Subreddit {
         return new Subreddit({ name }, this);
+    }
+
+    async fetchKarma() {
+        // @todo: finish this
+        return _fetch(this, 'api/v1/me/karma', { method: 'GET' });
     }
 }

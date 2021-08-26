@@ -65,8 +65,8 @@ export class RedditUser<Data extends RedditUserData = RedditUserData> extends Re
         this.created = data.created;
     }
 
-    protected _populate(data: MissingEndpoint | RawResult) {
-        const redditUserData = (data as RawResult).data;
+    protected _populate(data: MissingEndpoint | RawResult | RawRedditUser) {
+        const redditUserData = this.name ? (data as RawResult).data : data as RawRedditUser;
 
         return new RedditUser({
             ...this.data,
@@ -88,6 +88,6 @@ export class RedditUser<Data extends RedditUserData = RedditUserData> extends Re
     }
 
     protected get uri() {
-        return `user/${this.name}/about`;
+        return this.name ? `user/${this.name}/about` : 'api/v1/me';
     }
 };

@@ -5,6 +5,8 @@ import * as askRedditArticle from '../_mocks/r/AskReddit/comments/article';
 import * as publicSfwSubArticle from '../_mocks/r/public_sfw_sub/comments/article';
 import { About as OmgImAlexisAbout } from '../_mocks/user/OmgImAlexis/about';
 import { About as AskRedditAbout } from '../_mocks/r/AskReddit/about';
+import { About as PhoenixStarshipAbout } from '../_mocks/oauth.reddit.com/user/phoenix_starship/about';
+import { Random as RandomSubmission } from '../_mocks/r/random';
 import { NewSubmissions as AskRedditNewSubmissions } from '../_mocks/r/AskReddit/new';
 
 const errors = {
@@ -98,5 +100,28 @@ export const mockServer = setupServer(
     }),
     rest.get('https://oauth.reddit.com/r/AskReddit/new', (_req, res, ctx) => {
         return res(ctx.json(AskRedditNewSubmissions));
+    }),
+    rest.get('https://oauth.reddit.com/user/phoenix_starship/about', (_req, res, ctx) => {
+        return res(ctx.json(PhoenixStarshipAbout));
+    }),
+    rest.get('https://oauth.reddit.com/r/random', (_req, res, ctx) => {
+        return res(ctx.json(RandomSubmission));
+    }),
+    rest.post('https://oauth.reddit.com/api/remove', (req, res, ctx) => {
+        const id = req.url.searchParams.get('id');
+        const spam = req.url.searchParams.get('spam');
+        if (!(id in info)) return res(ctx.json(errors[403]));
+        info[id].data.children[0].data.removed_by = 'TestAccount123';
+        info[id].data.children[0].data.removed_by_category = 'moderator';
+        info[id].data.children[0].data.ban_note = spam ? 'spam' : 'remove not spam';
+        return res(ctx.json({}));
+    }),
+    rest.post('https://oauth.reddit.com/api/approve', (req, res, ctx) => {
+        const id = req.url.searchParams.get('id');
+        if (!(id in info)) return res(ctx.json(errors[403]));
+        info[id].data.children[0].data.removed_by = undefined;
+        info[id].data.children[0].data.removed_by_category = undefined;
+        info[id].data.children[0].data.ban_note = undefined;
+        return res(ctx.json({}));
     }),
 );

@@ -1,8 +1,15 @@
 import { SnooWrapped } from "../snoo-wrapped";
 import { RedditContent } from "./reddit-content";
+import { RedditUser } from "./reddit-user";
 
-export class ReplyableContent<Data extends { name: string; removed?: boolean; }> extends RedditContent<Data> {
-    public removed?: boolean;
+interface RemovedInfo {
+    by: string;
+    reason: string;
+    category: 'admin' | 'moderator';
+}
+
+export class ReplyableContent<Data extends { name: string; author?: RedditUser; removed?: RemovedInfo; }> extends RedditContent<Data> {
+    public removed?: RemovedInfo;
 
     constructor(data: Data, snooWrapped: SnooWrapped) {
         super(data, snooWrapped);
@@ -43,10 +50,9 @@ export class ReplyableContent<Data extends { name: string; removed?: boolean; }>
 
     /**
      * Blocks the author of this content.
-     * **Note:** In order for this function to have an effect, this item **must** be in the authenticated account's inbox or modmail somewhere.
-     * The reddit API gives no outward indication of whether this condition is satisfied, so the returned Promise will fulfill even if this is not the case.
      */
     protected async _blockAuthor() {
-        return this._fetch('api/block', { method: 'POST', query: { id: this.name } }).then(() => this);
+        const name = this.author?.name ? this.author?.name : await this.fetch().then(submission => submission.author?.name!);
+        return this._fetch('api/block_user', { method: 'POST', query: { name } }).then(() => this);
     }
 }

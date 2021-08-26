@@ -1,7 +1,6 @@
 import ava, { TestInterface } from 'ava';
 import { RequiredArgumentError } from '../../src/errors/required-argument-erorr';
 import { RedditUser } from '../../src/objects/reddit-user';
-import { Submission } from '../../src/objects/submission';
 import { SnooWrapped } from '../../src/snoo-wrapped';
 import { credentials } from '../_helpers/credentials';
 import { mockServer } from '../_helpers/mock-fetch';
@@ -86,4 +85,47 @@ test.serial('fetch()', async t => {
     t.true((fetchedRedditUser.karma?.comment || 0) >= 9476);
     t.true((fetchedRedditUser.karma?.link || 0) >= 25392);
     t.true((fetchedRedditUser.karma?.total || 0) >= 45672);
+});
+
+test.serial('getMe()', async t => {
+    const { snooWrapped } = t.context;
+
+    // OK
+    t.notThrows(() => {
+        snooWrapped.getMe();
+    });
+
+    // Returns an unfetched "RedditUser"
+    // Since we passed in a username we know this will return a valid object
+    const redditUser = snooWrapped.getMe()!;
+    t.not(redditUser, undefined);
+    t.true(redditUser instanceof RedditUser);
+    t.is(redditUser.name, 'phoenix_starship');
+    t.is(redditUser.created, undefined);
+    t.is(redditUser.isGold, undefined);
+    t.is(redditUser.isMod, undefined);
+    t.is(redditUser.isVerified, undefined);
+    t.is(redditUser.hasVerifiedEmail, undefined);
+    t.is(redditUser.karma?.awardee, undefined);
+    t.is(redditUser.karma?.awarder, undefined);
+    t.is(redditUser.karma?.comment, undefined);
+    t.is(redditUser.karma?.link, undefined);
+    t.is(redditUser.karma?.total, undefined);
+
+    // Returns a fetched "RedditUser"
+    const fetchedRedditUser = await snooWrapped.fetchMe();
+    t.not(fetchedRedditUser, undefined);
+    t.true(fetchedRedditUser instanceof RedditUser);
+    t.is(fetchedRedditUser.name, 'phoenix_starship');
+    t.is(fetchedRedditUser.id, '55t6515a');
+    t.deepEqual(fetchedRedditUser.created, new Date(1623671212));
+    t.false(fetchedRedditUser.isGold);
+    t.true(fetchedRedditUser.isMod);
+    t.true(fetchedRedditUser.isVerified);
+    t.false(fetchedRedditUser.hasVerifiedEmail);
+    t.is(fetchedRedditUser.karma?.awardee, 0);
+    t.is(fetchedRedditUser.karma?.awarder, 0);
+    t.is(fetchedRedditUser.karma?.comment, 0);
+    t.is(fetchedRedditUser.karma?.link, 1);
+    t.is(fetchedRedditUser.karma?.total, 1);
 });

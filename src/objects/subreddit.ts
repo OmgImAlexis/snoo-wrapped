@@ -35,6 +35,18 @@ interface RawSubmissionsResult {
     }
 }
 
+interface SubmitOptions {
+    nsfw?: boolean;
+}
+
+interface SubmitLinkOptions {
+    url: string;
+};
+
+interface SubmitSelfPostOptions {
+    text: string;
+}
+
 export class Subreddit<Data extends SubredditData = SubredditData> extends RedditContent<Data> {
     public subscribers?: number;
     public created?: Date;
@@ -77,5 +89,9 @@ export class Subreddit<Data extends SubredditData = SubredditData> extends Reddi
 
     protected async _populate(data: RawResult) {
         return Subreddit.from(this.snooWrapped, data.data, this.data);
+    }
+
+    async submit<T extends 'link' | 'self', Options = SubmitOptions & (T extends 'link' ? SubmitLinkOptions : SubmitSelfPostOptions)>(type: T, options: Options) {
+        return this._fetch<{}>('api/submit', { method: 'POST', query: { sr: this.name, kind: type, ...options } });
     }
 }
