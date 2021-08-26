@@ -45,7 +45,7 @@ interface RawResult {
 }
 
 interface SubmissionData {
-    id: string;
+    id?: string;
     name: string;
     subreddit?: Subreddit;
     comments?: Comment[];
