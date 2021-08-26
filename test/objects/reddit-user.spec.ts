@@ -88,7 +88,13 @@ test.serial('fetch()', async t => {
 });
 
 test.serial('getMe()', async t => {
-    const { snooWrapped } = t.context;
+    // We use a new instance of SnooWrapped
+    // so we can change the username, otherwise
+    // this would be set as `THIS_IS_A_FAKE_USERNAME_USED_FOR_TESTS`
+    const snooWrapped = new SnooWrapped({
+        ...credentials,
+        username: 'phoenix_starship'
+    });
 
     // OK
     t.notThrows(() => {
