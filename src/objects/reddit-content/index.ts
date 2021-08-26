@@ -10,8 +10,9 @@ export interface RawAccessToken {
     scope: string;
 };
 
-export class RedditContent<Data extends { name: string; author?: RedditUser; }> {
+export class RedditContent<Data extends { id: string; name: string; author?: RedditUser; }> {
     public readonly name: string;
+    public readonly id?: string;
     public readonly author?: RedditUser;
     protected snooWrapped: SnooWrapped;
     protected data: Data;
@@ -22,6 +23,7 @@ export class RedditContent<Data extends { name: string; author?: RedditUser; }> 
 
         // Save data
         this.data = data;
+        this.id = data.id;
         this.name = data.name;
         this.author = data.author;
 

@@ -9,6 +9,7 @@ import { VoteableContent } from "./votable-content";
 
 export interface RawSubmission {
     title: string;
+    id: string;
     name: string;
     subreddit: string;
     author: string;
@@ -44,6 +45,7 @@ interface RawResult {
 }
 
 interface SubmissionData {
+    id: string;
     name: string;
     subreddit?: Subreddit;
     comments?: Comment[];
@@ -124,6 +126,7 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
     static from(snooWrapped: SnooWrapped, rawSubmission: RawSubmission, submissionData: Partial<SubmissionData> = {}): Submission<SubmissionData> {
         return new Submission({
             ...submissionData,
+            id: rawSubmission.id,
             name: rawSubmission.name,
             author: new RedditUser({ name: rawSubmission.author }, snooWrapped),
             subreddit: new Subreddit({ name: rawSubmission.subreddit, subscribers: rawSubmission.subreddit_subscribers }, snooWrapped),
