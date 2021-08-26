@@ -10,7 +10,7 @@ export interface RawAccessToken {
     scope: string;
 };
 
-export class RedditContent<Data extends { id: string; name: string; author?: RedditUser; }> {
+export class RedditContent<Data extends { id?: string; name: string; author?: RedditUser; }> {
     public readonly name: string;
     public readonly id?: string;
     public readonly author?: RedditUser;
