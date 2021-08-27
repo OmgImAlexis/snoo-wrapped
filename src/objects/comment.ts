@@ -126,4 +126,11 @@ export class Comment<Data extends CommentData = CommentData> extends VoteableCon
      async blockAuthor() {
         return this._blockAuthor();
     }
+
+    /**
+     * Report this comment to the moderators of the subreddit.
+     */
+    async report(reason: string) {
+        return this._report(reason);
+    }
 }

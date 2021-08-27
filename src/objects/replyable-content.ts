@@ -55,4 +55,11 @@ export class ReplyableContent<Data extends { name: string; author?: RedditUser; 
         const name = this.author?.name ? this.author?.name : await this.fetch().then(submission => submission.author?.name!);
         return this._fetch('api/block_user', { method: 'POST', query: { name } }).then(() => this);
     }
+
+    /**
+     * Report this piece of content to the moderators of the subreddit.
+     */
+    protected async _report(reason: string) {
+        return this._fetch('api/report', { method: 'POST', query: { thing_id: this.id!, reason: 'other', other_reason: reason } }).then(() => this);
+    }
 }

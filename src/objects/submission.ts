@@ -371,4 +371,11 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
     async blockAuthor() {
         return this._blockAuthor();
     }
+
+    /**
+     * Report this submission to the moderators of the subreddit.
+     */
+    async report(reason: string) {
+        return this._report(reason);
+    }
 }
