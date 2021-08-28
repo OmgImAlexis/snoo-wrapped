@@ -21,6 +21,7 @@ export interface RawSubmission {
     subreddit_type: SubredditType;
     domain: string;
     selftext: string;
+    url?: string;
     archived: boolean;
     over_18: boolean;
     spoiler: boolean;
@@ -61,6 +62,7 @@ interface SubmissionData {
     subredditType?: SubredditType;
     domain?: string;
     body?: string;
+    url?: string;
     archived?: boolean;
     nsfw?: boolean;
     spoilered?: boolean;
@@ -83,6 +85,7 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
     public subredditType?: string;
     public domain?: string;
     public body?: string;
+    public url?: string;
     public archived?: boolean;
     public nsfw?: boolean;
     public spoilered?: boolean;
@@ -108,6 +111,7 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
         this.subredditType = data.subredditType;
         this.domain = data.domain;
         this.body = data.body;
+        this.url = data.url;
         this.archived = data.archived;
         this.nsfw = data.nsfw;
         this.spoilered = data.spoilered;
@@ -141,6 +145,7 @@ export class Submission<Data extends SubmissionData = SubmissionData> extends Vo
             subredditType: rawSubmission.subreddit_type,
             domain: rawSubmission.domain,
             body: rawSubmission.selftext,
+            url: rawSubmission.url,
             archived: rawSubmission.archived,
             nsfw: rawSubmission.over_18,
             spoilered: rawSubmission.spoiler,
