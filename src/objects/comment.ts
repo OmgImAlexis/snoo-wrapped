@@ -30,7 +30,7 @@ interface RawResult {
     }
 }
 
-interface CommentData {
+export interface CommentData {
     name: string;
     submission?: Submission;
     subreddit?: Subreddit;

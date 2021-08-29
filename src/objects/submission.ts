@@ -45,7 +45,7 @@ interface RawResult {
     }
 }
 
-interface SubmissionData {
+export interface SubmissionData {
     id?: string;
     name: string;
     subreddit?: Subreddit;
